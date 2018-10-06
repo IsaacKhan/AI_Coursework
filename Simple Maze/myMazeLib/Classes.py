@@ -9,6 +9,7 @@ class Node:
         self.value = value
         self.pathTraveled = []
         self.visited = False
+        self.parentNode = None
         self.nextNode = None
     
 class SomeThing:
@@ -18,6 +19,7 @@ class SomeThing:
     #This is the constructor for the class SomeThing
     def __init__(self, root = None, size = 0):
         self.root = root
+        self.solution = []
         self.size = 0
     
     #This member function will add nodes to our list
@@ -38,7 +40,6 @@ class SomeThing:
 
         #In this case, there are one or more nodes in our list
         else:
-
             #So we create a traversal node, and set it to the root
             currentNode = self.root
 
@@ -53,14 +54,11 @@ class SomeThing:
 
                 #Loop through the list until we get to the last node
                 while currentNode.nextNode is not None:
-
                     #At each iteration, we add the location value of that node to our temp variable
                     temp.append(currentNode.location)
 
                     #move our traversal node to the next node
                     currentNode = currentNode.nextNode
-            if Location == 4:
-                print()
                 
             #This makes sure we capture the last node's location value in our temp variable
             temp.append(currentNode.location)
@@ -76,6 +74,9 @@ class SomeThing:
 
             #Since our traversal node is set to the last node we can use it to put our newNode at the end
             currentNode.nextNode = newNode
+
+            #This should fix it, 
+            newNode.parentNode = currentNode
 
             #and increase the size of our list
             self.size += 1
@@ -139,6 +140,49 @@ class SomeThing:
         #at this point we know the node hasn't been visited AND doesn't exist
         return False
 
+    def getSolution(self):
+        currentNode = self.root
+        tempSolution = deque([])
+
+        #go to the end of the list
+        while currentNode.nextNode is not None and currentNode.value is not "X":
+            currentNode = currentNode.nextNode
+
+        tempNode = currentNode   
+        
+        #freom the end of the list, we will work our way back to the entrance, recording the parent nodes
+        while currentNode.parentNode is not None and currentNode.value is not "E":
+
+            #since we create a node when it hasn't been visited, we don't have a clean list
+            #so we set some rules for what can fall within our solution path, and then move forward
+            if tempNode.parentNode.location == currentNode.location - 1: #+ 10:
+                tempSolution.appendleft(currentNode.location)
+                currentNode = tempNode.parentNode
+                tempNode = currentNode
+
+            elif tempNode.parentNode.location == currentNode.location - 10: #+ 1:
+                tempSolution.appendleft(currentNode.location)
+                currentNode = tempNode.parentNode
+                tempNode = currentNode
+
+            elif tempNode.parentNode.location == currentNode.location + 1: #- 10:
+                tempSolution.appendleft(currentNode.location)
+                currentNode = tempNode.parentNode
+                tempNode = currentNode
+
+            elif tempNode.parentNode.location == currentNode.location + 10: #- 1:
+                tempSolution.appendleft(currentNode.location)
+                currentNode = tempNode.parentNode
+                tempNode = currentNode
+
+            else:
+                tempNode = tempNode.parentNode
+        
+        tempSolution.appendleft(currentNode.location)
+
+        for location in tempSolution:
+            self.solution.append(location)
+
     #Print function for my thing(s)
     #Instead of printing the whole list, i'm just printing the last node
     #Since it will have the pathTraveled data of all previous nodes
@@ -151,9 +195,10 @@ class SomeThing:
             currentNode = currentNode.nextNode
 
         #and then print that node's data
-        print("Step ", self.size)
+        print("Total Steps: ", self.size)
+        print("Soultion Steps: ", len(self.solution))
         print("-------------------------------------")
         print("Location:", currentNode.location)
         print("Value:", currentNode.value)
-        print("Path Traveled:", currentNode.pathTraveled)
+        print("Solution Path:", self.solution)
         print("-------------------------------------")

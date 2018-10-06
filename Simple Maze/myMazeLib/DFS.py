@@ -122,3 +122,5 @@ def DFS(something, iMaze, start):
 
         #pop the stack
         currentLocation = stack.pop()
+
+    something.getSolution()

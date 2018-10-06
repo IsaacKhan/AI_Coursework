@@ -128,3 +128,5 @@ def BFS(something, iMaze, start):
 
         #and set the new current location euqal the the new, left-most item in our queue
         currentLocation = queue[0]
+
+    something.getSolution()
